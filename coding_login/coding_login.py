@@ -1,4 +1,4 @@
-# coding=gbk
+# coding=utf-8
 __author__ = 'root'
 import requests
 import hashlib
@@ -6,12 +6,13 @@ import ast
 import json
 import time
 
+
 class Coding:
     # function structure
     def __init__(self, username, password):
         phone = None
-        # »ù±¾µÇÂ½ĞÅÏ¢,ÔÚ¹¹Ôìº¯ÊıÖĞµÄ±äÁ¿£¬Ã¿´Îµ÷ÓÃ¶¼±»ÀàµÄÄÚ²¿¹²Ïí£¬ÕâÀïÖ¸µÄµÄÊÇ
-        # loginÖĞµÄsession ºÍcookies»áÔÚÀàÖĞÆäËûº¯Êı¹²Ïí£¬´Ó¶ø±£Ö¤Ò»¸ösessionÁ¬½Ó
+        # åŸºæœ¬ç™»é™†ä¿¡æ¯,åœ¨æ„é€ å‡½æ•°ä¸­çš„å˜é‡ï¼Œæ¯æ¬¡è°ƒç”¨éƒ½è¢«ç±»çš„å†…éƒ¨å…±äº«ï¼Œè¿™é‡ŒæŒ‡çš„çš„æ˜¯
+        # loginä¸­çš„session å’Œcookiesä¼šåœ¨ç±»ä¸­å…¶ä»–å‡½æ•°å…±äº«ï¼Œä»è€Œä¿è¯ä¸€ä¸ªsessionè¿æ¥
         self.username = username
         self.password = hashlib.sha1(password).hexdigest()
         self.url_getCookie = "https://coding.net/api/captcha/login"
@@ -33,7 +34,7 @@ class Coding:
         """get login and return cookies"""
         cookies = dict(self.session.get(self.url_getCookie).cookies)
         print "[+] Cookies info:%s" % cookies
-        # send a post to login ·¢ËÍÒ»¸öµÇÂ½post
+        # send a post to login å‘é€ä¸€ä¸ªç™»é™†post
         login_session = self.session.post(url=self.url_login,
                                           headers=self.headers,
                                           data=self.login_data,
@@ -41,23 +42,23 @@ class Coding:
         info = str(login_session.text.encode("gbk"))
         print "[+] Login info:%s" % info
         info_dict = ast.literal_eval(info[info.find('"data":') + len('"data":'):info.find('"followed"') - 1] + "}")
-        print "[+]±êÇ©:" + info_dict["tags_str"]
-        print "[+]ÄêÁä:" + info_dict["tags"]
+        print "[+]æ ‡ç­¾:" + info_dict["tags_str"]
+        print "[+]å¹´é¾„:" + info_dict["tags"]
         if info_dict["sex"] == 0:
-            info_dict["sex"] = "ÄĞ"
+            info_dict["sex"] = "ç”·"
         else:
-            info_dict["sex"] = "Å®"
-        print "[+]ĞÔ±ğ:" + info_dict["sex"]
-        print "[+]ÊÖ»ú:" + info_dict["phone"]
-        print "[+]ÉúÈÕ:" + info_dict["birthday"]
-        print "[+]Í·Ïñ:" + info_dict["avatar"]
-        print "[+]ÕËºÅ´´½¨Ê±¼ä:" + str(info_dict["created_at"])
-        print "[+]×îºóµÇÂ½Ê±¼ä:" + str(info_dict["last_logined_at"])
-        print "[+]×îºó»î¶¯Ê±¼ä:" + str(info_dict["last_activity_at"])
-        print "[+]ÓÊÏä:" + info_dict["email"]
-        print "[+]¹Ø×¢Õß:" + str(info_dict["follows_count"])
-        print "[+]±»¹Ø×¢Êı:" + str(info_dict["fans_count"])
-        print "[+]Ã°ÅİÌõÊı:" + str(info_dict["tweets_count"])
+            info_dict["sex"] = "å¥³"
+        print "[+]æ€§åˆ«:" + info_dict["sex"]
+        print "[+]æ‰‹æœº:" + info_dict["phone"]
+        print "[+]ç”Ÿæ—¥:" + info_dict["birthday"]
+        print "[+]å¤´åƒ:" + info_dict["avatar"]
+        print "[+]è´¦å·åˆ›å»ºæ—¶é—´:" + str(info_dict["created_at"])
+        print "[+]æœ€åç™»é™†æ—¶é—´:" + str(info_dict["last_logined_at"])
+        print "[+]æœ€åæ´»åŠ¨æ—¶é—´:" + str(info_dict["last_activity_at"])
+        print "[+]é‚®ç®±:" + info_dict["email"]
+        print "[+]å…³æ³¨è€…:" + str(info_dict["follows_count"])
+        print "[+]è¢«å…³æ³¨æ•°:" + str(info_dict["fans_count"])
+        print "[+]å†’æ³¡æ¡æ•°:" + str(info_dict["tweets_count"])
 
         return cookies
 
@@ -67,59 +68,61 @@ class Coding:
         """
 
         cookies = self.login()
-        # Ã°Åİ±àÂë unicode->utf-8
-        # ½â¾ö£ºhttp://www.crifan.com/unicodeencodeerror_gbk_codec_can_not_encode_character_in_position_illegal_multibyte_sequence/
+        # å†’æ³¡ç¼–ç  unicode->utf-8
+        # è§£å†³ï¼šhttp://www.crifan.com/unicodeencodeerror_gbk_codec_can_not_encode_character_in_position_illegal_multibyte_sequence/
         tweet = raw_input('[+] Enter your tweet to pp:').decode('gbk', 'ignore').encode('utf-8')
-        # ÖØĞÂ¹¹Ôìheaders£¬Ìí¼Óorigin,referer£¬·ÀÖ¹ÆäÑéÖ¤ÑéÖ¤£¬µ«ÊÇÊµ¼ÊÃ»ÓĞÑéÖ¤
+        # é‡æ–°æ„é€ headersï¼Œæ·»åŠ origin,refererï¼Œé˜²æ­¢å…¶éªŒè¯éªŒè¯ï¼Œä½†æ˜¯å®é™…æ²¡æœ‰éªŒè¯
         self.headers["Origin"] = "https://coding.net"
         self.headers["Referer"] = "https://coding.net/pp"
-        # ¸Ä±äheaders ´Ó¶ø¸Ä±ä¿Í»§¶ËÎªÒÆ¶¯¶Ë
+        # æ”¹å˜headers ä»è€Œæ”¹å˜å®¢æˆ·ç«¯ä¸ºç§»åŠ¨ç«¯
         change_platform = raw_input("[+] Choose other platform,default PC platform (Yes/No) :").upper()
         if not change_platform != "YES":
             self.headers["User-Agent"] = 'Mozilla/5.0 (Linux; Android 4.3; Nexus 10 Build/JSS15Q) ' \
                                          'AppleWebKit/537.36 (KHTML, like Gecko) ' \
                                          'Chrome/42.0.2307.2 Mobile Safari/537.36'
         print "[+] structure a new headers:%s" % self.headers
-        # ²»ÖªµÀÎªÊ²Ã´ÔÚÃ°ÅİÊ± coding¶ÔcookiesÃ»ÓĞÒªÇó£¬ÕâÀï¿ÉÒÔ²»Ìí¼Ó
+        # ä¸çŸ¥é“ä¸ºä»€ä¹ˆåœ¨å†’æ³¡æ—¶ codingå¯¹cookiesæ²¡æœ‰è¦æ±‚ï¼Œè¿™é‡Œå¯ä»¥ä¸æ·»åŠ 
         send_tweet = self.session.post(url="https://coding.net/api/tweet",
                                        headers=self.headers,
                                        data={"content": tweet},
                                        cookies=cookies)
         print "[+] tweet info :%s" % send_tweet.text
-        print "[+] cookies:%s"%self.session.cookies
+        print "[+] cookies:%s" % self.session.cookies
 
-        tweet_url ="https://coding.net/api/tweet/public_tweets"
-        tweet_text = self.session.get(url=tweet_url,headers=self.headers,cookies=cookies).text
-        self.startId = int(tweet_text[tweet_text.index('{"id":')+len('{"id":'):tweet_text.index('{"id":')+len('{"id":')+5])
-        print "[+] tweet info:%s"%tweet_text
-        print "[+] pp id %d"%self.startId
+        tweet_url = "https://coding.net/api/tweet/public_tweets"
+        tweet_text = self.session.get(url=tweet_url, headers=self.headers, cookies=cookies).text
+        self.startId = int(
+            tweet_text[tweet_text.index('{"id":') + len('{"id":'):tweet_text.index('{"id":') + len('{"id":') + 5])
+        print "[+] tweet info:%s" % tweet_text
+        print "[+] pp id %d" % self.startId
 
     def deletePP(self):
         print self.startId
         # need not to set cookies
         # cookies = self.login()
-        delete_url = "https://coding.net/api/tweet/"+str(self.startId)
+        delete_url = "https://coding.net/api/tweet/" + str(self.startId)
         delete_pp = self.session.delete(url=delete_url,
                                         headers=self.headers)
-        # É¾³ıÃ°Åİ
-        print "[+] delete pp info:%s"%delete_pp.text
+        # åˆ é™¤å†’æ³¡
+        print "[+] delete pp info:%s" % delete_pp.text
 
     def zan(self):
         cookies = self.login()
-        tweet_url ="https://coding.net/api/tweet/public_tweets"
-        tweet_text = self.session.get(url=tweet_url,headers=self.headers,cookies=cookies).text
-        endId = int(tweet_text[tweet_text.find('{"id":')+len('{"id":'):tweet_text.find('{"id":')+len('{"id":')+5])
-        startId = int(tweet_text[tweet_text.rindex('{"id":')+len('{"id":'):tweet_text.rindex('{"id":')+len('{"id":')+5])
+        tweet_url = "https://coding.net/api/tweet/public_tweets"
+        tweet_text = self.session.get(url=tweet_url, headers=self.headers, cookies=cookies).text
+        endId = int(tweet_text[tweet_text.find('{"id":') + len('{"id":'):tweet_text.find('{"id":') + len('{"id":') + 5])
+        startId = int(
+            tweet_text[tweet_text.rindex('{"id":') + len('{"id":'):tweet_text.rindex('{"id":') + len('{"id":') + 5])
 
-        for count in xrange(startId,endId):
-            zan_url = "https://coding.net/api/tweet/"+str(count)+"/like"
+        for count in xrange(startId, endId):
+            zan_url = "https://coding.net/api/tweet/" + str(count) + "/like"
             time.sleep(1)
             zan_tweet = self.session.post(url=zan_url,
-                                          headers= self.headers,
+                                          headers=self.headers,
                                           cookies=cookies)
-            print "[+] zan from %d  to %d ,left:%d, time:%s,info:%s"\
-                  %(startId,endId,endId-count,time.ctime(),zan_tweet.text)
-            startId+=1
+            print "[+] zan from %d  to %d ,left:%d, time:%s,info:%s" \
+                  % (startId, endId, endId - count, time.ctime(), zan_tweet.text)
+            startId += 1
 
     def getData(self):
         """get tweet data"""
@@ -134,8 +137,8 @@ class Coding:
         cookies = self.login()
         phone = raw_input("[+] Enter your phone number:")
         send_msg = self.session.post("https://coding.net/api/user/generate_phone_code",
-                                     dict(phone=phone),cookies=cookies)
-        print "[+] cookies:%s"%self.session.cookies
+                                     dict(phone=phone), cookies=cookies)
+        print "[+] cookies:%s" % self.session.cookies
         print "[+] Send info :%s" % send_msg.text
 
 
@@ -145,13 +148,13 @@ if __name__ == "__main__":
     # phone = raw_input("[+]Enter your phone:")
     # test = coding(username,password,phone)
     # print test.login_and_send()
-    test = Coding("yuious", "XXXXXXXXX")
+    test = Coding("yuious", "")
     test.pp()
-    choose = raw_input("[+] ÊÇ·ñÉ¾³ıÃ°Åİ(Yes/No)£º")
-    if choose[0].upper()=='Y':
+    choose = raw_input("[+] æ˜¯å¦åˆ é™¤å†’æ³¡(Yes/No)ï¼š")
+    if choose[0].upper() == 'Y':
         test.deletePP()
     else:
         pass
-    # test.send_msg_valid()
-    # test.getData()
-    # test.zan()
+        # test.send_msg_valid()
+        # test.getData()
+        # test.zan()
