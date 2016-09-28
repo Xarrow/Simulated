@@ -38,7 +38,7 @@ user_prefs = Table('user_prefs', metadata,
 
 metadata.create_all(engine)
 
-# u = User(user_id =1,user_name='zhangsan', email_address='zhangsan@tuniu.com', password='dasd')
-# print u
-# session.add(u)
-# session.commit()
+u = User(user_id =1,user_name='zhangsan', email_address='zhangsan@tuniu.com', password='dasd')
+print u
+session.add(u)
+session.commit()
