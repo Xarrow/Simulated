@@ -26,7 +26,7 @@ logging.basicConfig(level=level, format=format, datefmt=datefmt)
 logger = logging.getLogger(__name__)
 
 # FIRST METHOD
-engine = create_engine(config.MYSQL_CONFIG, echo=True)
+engine = create_engine("mysql://root:toor123@localhost:3309/info_center", echo=True)
 Base = declarative_base()
 
 
