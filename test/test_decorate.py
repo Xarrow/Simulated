@@ -23,13 +23,11 @@ class Person():
         return "%s,%s" % (self.first_name, self.last_name)
 
 
-
-
 class Main():
     def __init__(self):
         pass
 
 
 if __name__ == '__main__':
-    p =  Person('zhang','san')
-    print p.full_name
+    p = Person('zhang', 'san')
+    print __name__
